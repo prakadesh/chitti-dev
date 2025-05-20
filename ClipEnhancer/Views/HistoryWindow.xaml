@@ -1,0 +1,141 @@
+<Window x:Class="ClipEnhancer.Views.HistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="History" Height="600" Width="800"
+        WindowStartupLocation="CenterOwner"
+        Background="#F5F5F5">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Text="Processing History"
+                 FontSize="24"
+                 FontWeight="SemiBold"
+                 Foreground="#333333"
+                 Margin="0,0,0,20"/>
+
+        <!-- Filters -->
+        <Grid Grid.Row="1" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal">
+                <ComboBox x:Name="StatusFilter"
+                         Width="120"
+                         Margin="0,0,10,0">
+                    <ComboBoxItem Content="All" IsSelected="True"/>
+                    <ComboBoxItem Content="Success"/>
+                    <ComboBoxItem Content="Error"/>
+                </ComboBox>
+                <ComboBox x:Name="TagFilter"
+                         Width="120"
+                         Margin="0,0,10,0">
+                    <ComboBoxItem Content="All" IsSelected="True"/>
+                    <ComboBoxItem Content="grammar"/>
+                    <ComboBoxItem Content="style"/>
+                    <ComboBoxItem Content="tone"/>
+                </ComboBox>
+                <DatePicker x:Name="DateFilter"
+                          Width="120"/>
+            </StackPanel>
+
+            <Button Grid.Column="1"
+                    Content="Apply Filters"
+                    Background="#2196F3"
+                    Foreground="White"
+                    Padding="15,8"
+                    Margin="10,0"
+                    Click="ApplyFilters_Click"/>
+
+            <Button Grid.Column="2"
+                    Content="Clear Filters"
+                    Background="#FF9800"
+                    Foreground="White"
+                    Padding="15,8"
+                    Click="ClearFilters_Click"/>
+        </Grid>
+
+        <!-- History List -->
+        <ListView x:Name="HistoryListView"
+                 Grid.Row="2"
+                 Background="White"
+                 BorderBrush="#E0E0E0"
+                 BorderThickness="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Timestamp" Width="150">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Timestamp, StringFormat=yyyy-MM-dd HH:mm:ss}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Tags" Width="100">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Tags}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Status" Width="100">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Status}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Original Text" Width="200">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding OriginalText}" TextTrimming="CharacterEllipsis"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Processed Text" Width="200">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ProcessedText}" TextTrimming="CharacterEllipsis"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <!-- Footer -->
+        <StackPanel Grid.Row="3"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,20,0,0">
+            <Button x:Name="CopyButton"
+                    Content="Copy Selected"
+                    Background="#4CAF50"
+                    Foreground="White"
+                    Padding="20,10"
+                    Click="CopyButton_Click"/>
+            <Button x:Name="ClearButton"
+                    Content="Clear History"
+                    Background="#F44336"
+                    Foreground="White"
+                    Padding="20,10"
+                    Margin="10,0,0,0"
+                    Click="ClearButton_Click"/>
+            <Button x:Name="CloseButton"
+                    Content="Close"
+                    Background="#9E9E9E"
+                    Foreground="White"
+                    Padding="20,10"
+                    Margin="10,0,0,0"
+                    Click="CloseButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window> 
