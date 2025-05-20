@@ -1,4 +1,4 @@
-# Clip Enhancer
+# Chitti
 
 A Windows desktop application that enhances your clipboard text using Google's Gemini API. The application monitors your clipboard for tagged text, processes it through the Gemini API, and replaces the clipboard content with the enhanced version.
 
@@ -15,7 +15,7 @@ A Windows desktop application that enhances your clipboard text using Google's G
 
 1. Download the latest release from the Releases page
 2. Extract the ZIP file to a location of your choice
-3. Run `ClipEnhancer.exe`
+3. Run `Chitti.exe`
 
 ## Usage
 
@@ -132,7 +132,7 @@ A Windows desktop application that enhances your clipboard text using Google's G
 
 All application data is stored locally in:
 ```
-%LOCALAPPDATA%\Clip Enhancer\clips.db
+%LOCALAPPDATA%\Chitti\clips.db
 ```
 
 The database includes:
@@ -189,4 +189,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 2. Create a feature branch
 3. Commit your changes
 4. Push to the branch
-5. Create a Pull Request 
+5. Create a Pull Request
+
+Copyright (c) 2024 Chitti 

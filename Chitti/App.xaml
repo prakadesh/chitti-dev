@@ -1,0 +1,194 @@
+<Application x:Class="Chitti.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Chitti">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Global Styles -->
+            <Style TargetType="Button">
+                <Setter Property="Margin" Value="0,5"/>
+                <Setter Property="Padding" Value="15,8"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    CornerRadius="6"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="TextBox">
+                <Setter Property="Padding" Value="8"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="#E0E0E0"/>
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="4">
+                                <ScrollViewer x:Name="PART_ContentHost"
+                                            Margin="{TemplateBinding Padding}"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Minimalistic color palette -->
+            <SolidColorBrush x:Key="PrimaryBackground" Color="#FAFAFA"/>
+            <SolidColorBrush x:Key="SidebarBackground" Color="#F5F5F5"/>
+            <SolidColorBrush x:Key="CardBackground" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="PrimaryText" Color="#222222"/>
+            <SolidColorBrush x:Key="SecondaryText" Color="#666666"/>
+            <SolidColorBrush x:Key="AccentBlue" Color="#2563EB"/>
+            <SolidColorBrush x:Key="SuccessGreen" Color="#22C55E"/>
+            <SolidColorBrush x:Key="ErrorRed" Color="#EF4444"/>
+            <SolidColorBrush x:Key="HoverBlue" Color="#EFF6FF"/>
+            <SolidColorBrush x:Key="ActiveBlue" Color="#DBEAFE"/>
+
+            <!-- Main Action Button Style -->
+            <Style x:Key="MainActionButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{StaticResource AccentBlue}"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Padding" Value="24,10"/>
+                <Setter Property="Margin" Value="0,8,0,0"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="MinWidth" Value="100"/>
+                <Setter Property="MinHeight" Value="40"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    CornerRadius="10"
+                                    SnapsToDevicePixels="True"
+                                    Effect="{DynamicResource DropShadowEffect}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#1749B1"/>
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="#11306E"/>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Background" Value="#B6C3E6"/>
+                        <Setter Property="Foreground" Value="#F5F5F5"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- Destructive Button Style -->
+            <Style x:Key="DestructiveButtonStyle" TargetType="Button" BasedOn="{StaticResource MainActionButtonStyle}">
+                <Setter Property="Background" Value="#EF4444"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#B91C1C"/>
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="#7F1D1D"/>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Background" Value="#FCA5A5"/>
+                        <Setter Property="Foreground" Value="#F5F5F5"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- Tag Pill Button Style -->
+            <Style x:Key="TagPillButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="#E3EDFC"/>
+                <Setter Property="Foreground" Value="#2563EB"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="FontSize" Value="15"/>
+                <Setter Property="Padding" Value="18,6"/>
+                <Setter Property="Margin" Value="6,6,0,0"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="MinWidth" Value="60"/>
+                <Setter Property="MinHeight" Value="32"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    CornerRadius="20"
+                                    SnapsToDevicePixels="True"
+                                    BorderBrush="#B6C3E6"
+                                    BorderThickness="1">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#2563EB"/>
+                        <Setter Property="Foreground" Value="White"/>
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="#1749B1"/>
+                        <Setter Property="Foreground" Value="White"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- Sidebar/Nav Button Style -->
+            <Style x:Key="SidebarNavButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{StaticResource PrimaryText}"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Padding" Value="20,12"/>
+                <Setter Property="Margin" Value="0,4"/>
+                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                <Setter Property="FontSize" Value="15"/>
+                <Setter Property="FontWeight" Value="Medium"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="MinWidth" Value="120"/>
+                <Setter Property="MinHeight" Value="40"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" 
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="8"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#EFF6FF"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#DBEAFE"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- DropShadow Effect Resource for Main Buttons -->
+            <DropShadowEffect x:Key="DropShadowEffect" BlurRadius="6" ShadowDepth="1" Color="#1A2563EB" Opacity="0.18"/>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application> 

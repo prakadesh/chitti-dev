@@ -1,0 +1,95 @@
+<Window x:Class="Chitti.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Settings" Height="450" Width="600"
+        WindowStartupLocation="CenterOwner"
+        Background="#F5F5F5">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Text="Settings"
+                 FontSize="24"
+                 FontWeight="SemiBold"
+                 Foreground="#333333"
+                 Margin="0,0,0,20"/>
+
+        <!-- Settings Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- API Key -->
+                <GroupBox Header="Gemini API Key" Padding="10" Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="Enter your Gemini API key:"
+                                 Margin="0,0,0,5"/>
+                        <PasswordBox x:Name="ApiKeyBox"
+                                   Padding="8"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Clipboard Monitoring -->
+                <GroupBox Header="Clipboard Monitoring" Padding="10" Margin="0,0,0,15">
+                    <StackPanel>
+                        <CheckBox x:Name="EnableMonitoringCheckBox"
+                                Content="Enable clipboard monitoring"
+                                IsChecked="True"
+                                Margin="0,0,0,10"/>
+                        <TextBlock Text="The application will monitor your clipboard for text with supported tags."
+                                 TextWrapping="Wrap"
+                                 Foreground="#666666"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- API Settings -->
+                <GroupBox Header="API Settings" Padding="10" Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="API Request Timeout (seconds):"
+                                 Margin="0,0,0,5"/>
+                        <TextBox x:Name="TimeoutBox"
+                                Text="30"
+                                Width="100"
+                                HorizontalAlignment="Left"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Notifications -->
+                <GroupBox Header="Notifications" Padding="10">
+                    <StackPanel>
+                        <CheckBox x:Name="DetailedNotificationsCheckBox"
+                                Content="Show detailed notifications"
+                                IsChecked="True"
+                                Margin="0,0,0,10"/>
+                        <TextBlock Text="When enabled, you'll see more detailed information about the text processing status."
+                                 TextWrapping="Wrap"
+                                 Foreground="#666666"/>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer Buttons -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,20,0,0">
+            <Button x:Name="SaveButton"
+                    Content="Save"
+                    Background="#4CAF50"
+                    Foreground="White"
+                    Padding="20,10"
+                    Click="SaveButton_Click"/>
+            <Button x:Name="CancelButton"
+                    Content="Cancel"
+                    Background="#F44336"
+                    Foreground="White"
+                    Padding="20,10"
+                    Margin="10,0,0,0"
+                    Click="CancelButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window> 

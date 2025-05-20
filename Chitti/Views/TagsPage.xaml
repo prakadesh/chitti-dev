@@ -1,0 +1,294 @@
+<UserControl x:Class="Chitti.Views.TagsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Chitti.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Selected Tags Area -->
+        <Border Grid.Row="0" 
+                Background="{StaticResource CardBackground}" 
+                CornerRadius="10" 
+                Padding="20" 
+                Margin="20,20,20,0">
+            <StackPanel>
+                <TextBlock Text="Selected Tags" 
+                         FontSize="18" 
+                         FontWeight="SemiBold" 
+                         Margin="0,0,0,10"/>
+                <WrapPanel x:Name="SelectedTagsPanel" Margin="0,0,0,10"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="CopyCombinedTagsButton" 
+                            Content="Copy Combined Tags" 
+                            Click="CopyCombinedTags_Click"
+                            Margin="0,0,10,0"/>
+                    <Button x:Name="ClearTagsButton" 
+                            Content="Clear Selection" 
+                            Click="ClearTags_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Tags List -->
+        <ScrollViewer Grid.Row="1" Margin="20">
+            <StackPanel>
+                <TextBlock Text="Available Tags" 
+                         FontSize="24" 
+                         FontWeight="SemiBold" 
+                         Margin="0,0,0,20"/>
+
+                <!-- Grammar &amp; Language Tags -->
+                <Border Background="{StaticResource CardBackground}" 
+                        CornerRadius="10" 
+                        Padding="20" 
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Grammar &amp; Language Tags" 
+                                 FontSize="18" 
+                                 FontWeight="SemiBold" 
+                                 Margin="0,0,0,10"/>
+                        <WrapPanel>
+                            <Button Content="/grammar" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/punctuation" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/spelling" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/syntax" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/tense" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/agreement" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Tone Tags -->
+                <Border Background="{StaticResource CardBackground}" 
+                        CornerRadius="10" 
+                        Padding="20" 
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Tone Tags" 
+                                 FontSize="18" 
+                                 FontWeight="SemiBold" 
+                                 Margin="0,0,0,10"/>
+                        <WrapPanel>
+                            <Button Content="/formal" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/casual" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/friendly" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/polite" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/assertive" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/diplomatic" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/empathetic" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/enthusiastic" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/neutral" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/humorous" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/serious" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/academic" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Style Tags -->
+                <Border Background="{StaticResource CardBackground}" 
+                        CornerRadius="10" 
+                        Padding="20" 
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Style Tags" 
+                                 FontSize="18" 
+                                 FontWeight="SemiBold" 
+                                 Margin="0,0,0,10"/>
+                        <WrapPanel>
+                            <Button Content="/fluent" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/concise" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/detailed" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/firstletter" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/allcaps" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/sentencecase" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/titlecase" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/bulletpoints" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/numbered" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/paragraph" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/simplify" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/expand" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/active" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/passive" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Format Tags -->
+                <Border Background="{StaticResource CardBackground}" 
+                        CornerRadius="10" 
+                        Padding="20" 
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Format Tags" 
+                                 FontSize="18" 
+                                 FontWeight="SemiBold" 
+                                 Margin="0,0,0,10"/>
+                        <WrapPanel>
+                            <Button Content="/markdown" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/html" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/json" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/xml" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/csv" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/table" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/code" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/quote" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/indent" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/spacing" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Content Tags -->
+                <Border Background="{StaticResource CardBackground}" 
+                        CornerRadius="10" 
+                        Padding="20" 
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Content Tags" 
+                                 FontSize="18" 
+                                 FontWeight="SemiBold" 
+                                 Margin="0,0,0,10"/>
+                        <WrapPanel>
+                            <Button Content="/summarize" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/keypoints" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/translate" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/paraphrase" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/proofread" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/factcheck" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/citations" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/references" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Translate Tags -->
+                <Border Background="{StaticResource CardBackground}" 
+                        CornerRadius="10" 
+                        Padding="20" 
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Translate Tags" 
+                                 FontSize="18" 
+                                 FontWeight="SemiBold" 
+                                 Margin="0,0,0,10"/>
+                        <WrapPanel>
+                            <Button Content="/english" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/mandarin" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/hindi" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/spanish" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/french" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/arabic" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/bengali" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/russian" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/portuguese" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/tamil" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Audience-Specific Tags -->
+                <Border Background="{StaticResource CardBackground}" 
+                        CornerRadius="10" 
+                        Padding="20" 
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Audience-Specific Tags" 
+                                 FontSize="18" 
+                                 FontWeight="SemiBold" 
+                                 Margin="0,0,0,10"/>
+                        <WrapPanel>
+                            <Button Content="/technical" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/layman" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/expert" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/beginner" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/children" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/senior" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Purpose Tags -->
+                <Border Background="{StaticResource CardBackground}" 
+                        CornerRadius="10" 
+                        Padding="20" 
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Purpose Tags" 
+                                 FontSize="18" 
+                                 FontWeight="SemiBold" 
+                                 Margin="0,0,0,10"/>
+                        <WrapPanel>
+                            <Button Content="/persuasive" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/informative" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/instructional" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/descriptive" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/narrative" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/analytical" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/critical" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Industry-Specific Tags -->
+                <Border Background="{StaticResource CardBackground}" 
+                        CornerRadius="10" 
+                        Padding="20" 
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Industry-Specific Tags" 
+                                 FontSize="18" 
+                                 FontWeight="SemiBold" 
+                                 Margin="0,0,0,10"/>
+                        <WrapPanel>
+                            <Button Content="/legal" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/medical" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/scientific" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/business" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Special Purpose Tags -->
+                <Border Background="{StaticResource CardBackground}" 
+                        CornerRadius="10" 
+                        Padding="20" 
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Special Purpose Tags" 
+                                 FontSize="18" 
+                                 FontWeight="SemiBold" 
+                                 Margin="0,0,0,10"/>
+                        <WrapPanel>
+                            <Button Content="@chitti" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click">
+                                <Button.ToolTip>
+                                    <ToolTip>
+                                        <StackPanel>
+                                            <TextBlock Text="Custom prompt tag" FontWeight="SemiBold"/>
+                                            <TextBlock Text="Add your text first, then use @chitti followed by your custom prompt"/>
+                                            <TextBlock Text="Example: Your text here @chitti fix the grammar"/>
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Button.ToolTip>
+                            </Button>
+                            <Button Content="/seo" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/social" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/email" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/report" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/presentation" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/blog" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/news" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl> 
