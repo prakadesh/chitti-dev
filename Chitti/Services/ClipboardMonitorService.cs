@@ -326,6 +326,18 @@ public class ClipboardMonitorService
         if (lowered.Contains("/citations")) tags.Add("citations");
         if (lowered.Contains("/references")) tags.Add("references");
 
+        // Translate Tags (add with slash)
+        if (lowered.Contains("/english")) tags.Add("/english");
+        if (lowered.Contains("/mandarin")) tags.Add("/mandarin");
+        if (lowered.Contains("/hindi")) tags.Add("/hindi");
+        if (lowered.Contains("/spanish")) tags.Add("/spanish");
+        if (lowered.Contains("/french")) tags.Add("/french");
+        if (lowered.Contains("/arabic")) tags.Add("/arabic");
+        if (lowered.Contains("/bengali")) tags.Add("/bengali");
+        if (lowered.Contains("/russian")) tags.Add("/russian");
+        if (lowered.Contains("/portuguese")) tags.Add("/portuguese");
+        if (lowered.Contains("/tamil")) tags.Add("/tamil");
+
         // Audience-Specific Tags
         if (lowered.Contains("/technical")) tags.Add("technical");
         if (lowered.Contains("/layman")) tags.Add("layman");
