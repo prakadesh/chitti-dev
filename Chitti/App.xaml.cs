@@ -33,6 +33,7 @@ public partial class App : System.Windows.Application
                 // Services
                 services.AddSingleton<GeminiService>();
                 services.AddSingleton<ClipboardMonitorService>();
+                services.AddSingleton<ScreenCaptureService>();
                 services.AddSingleton<NotifyIcon>(sp =>
                 {
                     var icon = new NotifyIcon

@@ -9,6 +9,7 @@ using Chitti.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Drawing;
 
 namespace Chitti.Services;
 
@@ -28,6 +29,7 @@ public class ClipboardMonitorService
 
     private readonly ApplicationDbContext _dbContext;
     private readonly GeminiService _geminiService;
+    private readonly ScreenCaptureService _screenCaptureService;
     private bool _isMonitoring;
     private System.Windows.Forms.Timer _clipboardTimer;
     private string _lastClipboardText = string.Empty;
@@ -139,6 +141,7 @@ public class ClipboardMonitorService
             .UseSqlite($"Data Source={AppPaths.DatabasePath}")
             .Options);
         _geminiService = geminiService;
+        _screenCaptureService = new ScreenCaptureService();
         _clipboardTimer = new System.Windows.Forms.Timer { Interval = 1000 };
         _clipboardTimer.Tick += ClipboardTimer_Tick;
     }
@@ -174,8 +177,6 @@ public class ClipboardMonitorService
                 var text = System.Windows.Forms.Clipboard.GetText();
                 if (string.IsNullOrWhiteSpace(text) || text == _lastClipboardText)
                 {
-                    StatusChanged?.Invoke(this, "Clipboard empty or unchanged.");
-                    Logger.Log("Clipboard empty or unchanged.");
                     return;
                 }
                 _lastClipboardText = text;
@@ -192,7 +193,31 @@ public class ClipboardMonitorService
                 StatusChanged?.Invoke(this, "Processing text...");
                 Logger.Log("Processing text with Gemini API...");
 
-                var processedText = await _geminiService.ProcessText(text, tags);
+                string processedText;
+                if (tags.Contains("@screen"))
+                {
+                    // Capture screen and process with image
+                    var image = _screenCaptureService.CaptureScreen();
+                    if (image == null)
+                    {
+                        StatusChanged?.Invoke(this, "Failed to capture screen.");
+                        return;
+                    }
+
+                    // Extract the prompt from the text (remove the @screen tag)
+                    var prompt = text.Replace("@screen", "").Trim();
+                    if (string.IsNullOrWhiteSpace(prompt))
+                    {
+                        prompt = "What do you see in this image?";
+                    }
+
+                    processedText = await _geminiService.ProcessImageWithText(image, prompt);
+                }
+                else
+                {
+                    processedText = await _geminiService.ProcessText(text, tags);
+                }
+
                 if (string.IsNullOrEmpty(processedText))
                 {
                     Logger.Log("Gemini API returned empty result.");
@@ -264,6 +289,12 @@ public class ClipboardMonitorService
                     tags.Add($"@chitti {prompt}");
                 }
             }
+        }
+
+        // Add this block to recognize @screen
+        if (lowered.Contains("@screen"))
+        {
+            tags.Add("@screen");
         }
 
         // Grammar & Language Tags

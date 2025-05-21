@@ -10,6 +10,8 @@ using Chitti.Data;
 using Chitti.Models;
 using Chitti.Helpers;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
+using System.IO;
 
 namespace Chitti.Services;
 
@@ -17,7 +19,8 @@ public class GeminiService
 {
     private readonly HttpClient _httpClient;
     private readonly ApplicationDbContext _dbContext;
-    private const string API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+    private const string TEXT_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+    private const string VISION_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent";
 
     public GeminiService()
     {
@@ -63,7 +66,80 @@ public class GeminiService
         {
             Logger.Log("GeminiService: Sending request to Gemini API.");
             var response = await _httpClient.PostAsync(
-                $"{API_URL}?key={decryptedApiKey}",
+                $"{TEXT_API_URL}?key={decryptedApiKey}",
+                new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json"));
+
+            Logger.Log($"GeminiService: API response status: {response.StatusCode}");
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Logger.Log($"GeminiService: API error content: {errorContent}");
+                throw new Exception($"API request failed: {response.StatusCode} - {errorContent}");
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Logger.Log($"GeminiService: API response content: {responseContent}");
+            var responseObject = JsonSerializer.Deserialize<JsonElement>(responseContent);
+
+            return responseObject
+                .GetProperty("candidates")[0]
+                .GetProperty("content")
+                .GetProperty("parts")[0]
+                .GetProperty("text")
+                .GetString() ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Logger.Log($"GeminiService: Exception occurred: {ex}");
+            throw;
+        }
+    }
+
+    public async Task<string> ProcessImageWithText(Image image, string prompt)
+    {
+        Logger.Log($"GeminiService: Preparing to process image with prompt: {prompt}");
+        var settings = await _dbContext.AppSettings.FirstOrDefaultAsync();
+        if (settings == null || string.IsNullOrEmpty(settings.ApiKey))
+        {
+            Logger.Log("GeminiService: API key not configured.");
+            throw new InvalidOperationException("API key not configured. Please set it in Settings.");
+        }
+
+        var decryptedApiKey = ApiKeyProtector.Decrypt(settings.ApiKey);
+        if (string.IsNullOrWhiteSpace(decryptedApiKey))
+        {
+            Logger.Log("GeminiService: Decrypted API key is empty or invalid.");
+            throw new InvalidOperationException("Decrypted API key is empty or invalid.");
+        }
+
+        try
+        {
+            // Convert image to base64
+            string base64Image;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                base64Image = Convert.ToBase64String(ms.ToArray());
+            }
+
+            var requestBody = new
+            {
+                contents = new[]
+                {
+                    new
+                    {
+                        parts = new object[]
+                        {
+                            new { text = prompt },
+                            new { inline_data = new { mime_type = "image/png", data = base64Image } }
+                        }
+                    }
+                }
+            };
+
+            Logger.Log("GeminiService: Sending request to Gemini Vision API.");
+            var response = await _httpClient.PostAsync(
+                $"{VISION_API_URL}?key={decryptedApiKey}",
                 new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json"));
 
             Logger.Log($"GeminiService: API response status: {response.StatusCode}");
