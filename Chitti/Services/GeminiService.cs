@@ -130,6 +130,7 @@ public class GeminiService
                     {
                         parts = new object[]
                         {
+                            new { text = "You are a professional AI assistant. People call access you from anywhere using @screen tag. You will be given a prompt and an image. You will then process the image and the prompt and return the processed text. You need to just return the processed text, nothing else as it will automaticaly replace the selected line with @screen tag in the users screen." },
                             new { text = prompt },
                             new { inline_data = new { mime_type = "image/png", data = base64Image } }
                         }

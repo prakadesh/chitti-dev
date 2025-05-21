@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -19,6 +20,7 @@ public partial class MainWindow : Window
         NotifyIcon notifyIcon)
     {
         InitializeComponent();
+        this.Icon = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,,/Chitti;component/Assets/logo.png"));
         
         _clipboardMonitor = clipboardMonitor;
         _notifyIcon = notifyIcon;

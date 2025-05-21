@@ -339,6 +339,7 @@
                     <DockPanel>
                         <!-- Logo and Title -->
                         <StackPanel DockPanel.Dock="Top" Margin="24,32,24,32">
+                            <Image Source="pack://application:,,,/Chitti;component/Assets/logo.png" Width="40" Height="40" Margin="0,0,0,8"/>
                             <TextBlock Text="Chitti" 
                                      FontSize="24" 
                                      FontWeight="SemiBold" 

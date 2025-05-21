@@ -172,6 +172,34 @@ public class ClipboardMonitorService
 
         try
         {
+            await ProcessClipboardText();
+        }
+        catch (Exception ex)
+        {
+            StatusChanged?.Invoke(this, $"Error: {ex.Message}");
+            Logger.Log($"Error: {ex}");
+
+            var history = new ClipboardHistory
+            {
+                OriginalText = System.Windows.Forms.Clipboard.GetText(),
+                ProcessedText = string.Empty,
+                Tags = string.Empty,
+                Timestamp = DateTime.UtcNow,
+                Status = "Error",
+                ErrorMessage = ex.Message
+            };
+
+            _dbContext.ClipboardHistory.Add(history);
+            await _dbContext.SaveChangesAsync();
+
+            ToastNotificationHelper.UpdateToastText("Error", ex.Message);
+        }
+    }
+
+    private async Task ProcessClipboardText()
+    {
+        try
+        {
             if (System.Windows.Forms.Clipboard.ContainsText())
             {
                 var text = System.Windows.Forms.Clipboard.GetText();
@@ -190,6 +218,8 @@ public class ClipboardMonitorService
                     return;
                 }
 
+                // Show single toast that will update its text
+                ToastNotificationHelper.ShowToast("Processing...", "Processing your clipboard text...");
                 StatusChanged?.Invoke(this, "Processing text...");
                 Logger.Log("Processing text with Gemini API...");
 
@@ -201,6 +231,8 @@ public class ClipboardMonitorService
                     if (image == null)
                     {
                         StatusChanged?.Invoke(this, "Failed to capture screen.");
+                        Logger.Log("Failed to capture screen.");
+                        ToastNotificationHelper.HideToast();
                         return;
                     }
 
@@ -221,11 +253,15 @@ public class ClipboardMonitorService
                 if (string.IsNullOrEmpty(processedText))
                 {
                     Logger.Log("Gemini API returned empty result.");
+                    ToastNotificationHelper.HideToast();
                     return;
                 }
 
                 System.Windows.Forms.Clipboard.SetText(processedText);
                 Logger.Log("Clipboard updated with processed text.");
+
+                // Update toast text for pasting
+                ToastNotificationHelper.UpdateToastText("Pasting...", "Your text is being pasted...");
 
                 // Simulate typing the processed text
                 await SimulateTyping(processedText);
@@ -242,8 +278,14 @@ public class ClipboardMonitorService
                 _dbContext.ClipboardHistory.Add(history);
                 await _dbContext.SaveChangesAsync();
 
+                // Update toast text for completion
+                ToastNotificationHelper.UpdateToastText("Done!", "Text processed and pasted.");
                 StatusChanged?.Invoke(this, "Text processed and typed automatically");
                 Logger.Log("Text processed, typed, and saved to history.");
+                
+                // Keep the success toast visible for a moment after pasting
+                await Task.Delay(2000);
+                ToastNotificationHelper.HideToast();
             }
             else
             {
@@ -268,6 +310,8 @@ public class ClipboardMonitorService
 
             _dbContext.ClipboardHistory.Add(history);
             await _dbContext.SaveChangesAsync();
+            
+            ToastNotificationHelper.HideToast();
         }
     }
 

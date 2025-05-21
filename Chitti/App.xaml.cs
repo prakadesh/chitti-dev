@@ -38,7 +38,7 @@ public partial class App : System.Windows.Application
                 {
                     var icon = new NotifyIcon
                     {
-                        Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location),
+                        Icon = new System.Drawing.Icon(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets/logo.ico")),
                         Visible = true,
                         Text = "Chitti"
                     };
