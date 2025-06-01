@@ -32,7 +32,7 @@ public partial class HomePage : UserControl
             .Take(5)
             .ToList();
         RecentActivityList.ItemsSource = recent;
-        OnboardingTip.Visibility = recent.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        //OnboardingTip.Visibility = recent.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void GitHubButton_Click(object sender, RoutedEventArgs e)
