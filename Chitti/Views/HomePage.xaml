@@ -171,7 +171,7 @@
 
         <!-- Main Content -->
         <ScrollViewer Grid.Row="1" 
-                      VerticalScrollBarVisibility="Auto" 
+                      VerticalScrollBarVisibility="Hidden" 
                       HorizontalScrollBarVisibility="Disabled"
                       Padding="24,8,24,24"
                       HorizontalAlignment="Stretch"
@@ -297,8 +297,18 @@
                                       VerticalScrollBarVisibility="Hidden"
                                       HorizontalScrollBarVisibility="Disabled"
                                       >
-                            <ItemsControl x:Name="RecentActivityList">
-                                <ItemsControl.ItemTemplate>
+                                <ItemsControl x:Name="RecentActivityList">
+                                    <ItemsControl.Style>
+                                        <Style TargetType="ItemsControl">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Items.Count, RelativeSource={RelativeSource Self}}" Value="0">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                               
+                                    </ItemsControl.Style>
+                                    <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Border Style="{StaticResource ActivityCardStyle}">
                                             <StackPanel>
@@ -334,7 +344,6 @@
 
                         <!-- Empty State -->
                         <StackPanel x:Name="EmptyStatePanel" 
-                                    Visibility="Visible" 
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Margin="0,40">
