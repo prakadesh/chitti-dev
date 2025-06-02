@@ -1,15 +1,16 @@
+using Chitti.Data;
+using Chitti.Helpers;
+using Chitti.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using Chitti.Data;
-using Chitti.Models;
-using Chitti.Helpers;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Drawing;
 
 namespace Chitti.Services;
 
@@ -30,12 +31,35 @@ public class ClipboardMonitorService
     private readonly ApplicationDbContext _dbContext;
     private readonly GeminiService _geminiService;
     private readonly ScreenCaptureService _screenCaptureService;
+    private bool _isMonitoringEnabled = true;
+    private readonly IServiceProvider _serviceProvider;
     private bool _isMonitoring;
     private System.Windows.Forms.Timer _clipboardTimer;
     private string _lastClipboardText = string.Empty;
 
     public event EventHandler<string>? StatusChanged;
 
+    public bool IsMonitoringEnabled
+    {
+        get => _isMonitoringEnabled;
+        set
+        {
+            if (_isMonitoringEnabled != value)
+            {
+                _isMonitoringEnabled = value;
+                if (_isMonitoringEnabled)
+                {
+                    StartMonitoring();
+                    StatusChanged?.Invoke(this, "Clipboard monitoring resumed");
+                }
+                else
+                {
+                    StopMonitoring();
+                    StatusChanged?.Invoke(this, "Clipboard monitoring paused");
+                }
+            }
+        }
+    }
     private bool ContainsCodeBlock(string text)
     {
         // Check for common code block indicators
@@ -135,12 +159,13 @@ public class ClipboardMonitorService
         }
     }
 
-    public ClipboardMonitorService(GeminiService geminiService)
+    public ClipboardMonitorService(GeminiService geminiService, IServiceProvider serviceProvider)
     {
         _dbContext = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseSqlite($"Data Source={AppPaths.DatabasePath}")
             .Options);
         _geminiService = geminiService;
+        _serviceProvider = serviceProvider;
         _screenCaptureService = new ScreenCaptureService();
         _clipboardTimer = new System.Windows.Forms.Timer { Interval = 1000 };
         _clipboardTimer.Tick += ClipboardTimer_Tick;
