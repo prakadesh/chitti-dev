@@ -17,6 +17,8 @@ public partial class App : System.Windows.Application
 {
     private readonly IHost _host;
     private NotifyIcon? _notifyIcon;
+    private SingleInstance? _singleInstance;
+
 
     public App()
     {
@@ -53,10 +55,23 @@ public partial class App : System.Windows.Application
 
     protected override async void OnStartup(StartupEventArgs e)
     {
+        // Setup system tray icon first
+        using var scope = _host.Services.CreateScope();
+        _notifyIcon = scope.ServiceProvider.GetRequiredService<NotifyIcon>();
+        var mainWindow = scope.ServiceProvider.GetRequiredService<MainWindow>();
+
+
+        // Check for single instance
+        _singleInstance = new SingleInstance(_notifyIcon);
+        if (!_singleInstance.IsFirstInstance())
+        {
+            Shutdown();
+            return;
+        }
+
         await _host.StartAsync();
 
         // Initialize database
-        using var scope = _host.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         await dbContext.Database.EnsureCreatedAsync();
 
@@ -64,11 +79,9 @@ public partial class App : System.Windows.Application
         var clipboardMonitor = scope.ServiceProvider.GetRequiredService<ClipboardMonitorService>();
         clipboardMonitor.StartMonitoring();
 
-        // Setup system tray icon
-        _notifyIcon = scope.ServiceProvider.GetRequiredService<NotifyIcon>();
+        // Setup system tray icon behavior
         _notifyIcon.DoubleClick += (s, e) =>
         {
-            var mainWindow = scope.ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
             mainWindow.WindowState = WindowState.Normal;
             mainWindow.Activate();

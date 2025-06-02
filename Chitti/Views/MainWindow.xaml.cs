@@ -86,6 +86,14 @@ public partial class MainWindow : Window
 
     private void MinimizeButton_Click(object sender, RoutedEventArgs e)
     {
+        if (_notifyIcon != null)
+        {
+            _notifyIcon.ShowBalloonTip(
+                3000,
+                "Chitti Minimized",
+                "Chitti is still running in the system tray. Double-click the icon to restore.",
+                ToolTipIcon.Info);
+        }
         WindowState = WindowState.Minimized;
     }
 
