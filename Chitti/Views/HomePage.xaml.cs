@@ -32,6 +32,8 @@ public partial class HomePage : UserControl
             .Take(5)
             .ToList();
         RecentActivityList.ItemsSource = recent;
+        EmptyStatePanel.Visibility = recent.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        RecentActivityList.Visibility = recent.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         //OnboardingTip.Visibility = recent.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 

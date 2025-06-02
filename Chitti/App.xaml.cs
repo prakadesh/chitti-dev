@@ -44,6 +44,50 @@ public partial class App : System.Windows.Application
                         Visible = true,
                         Text = "Chitti"
                     };
+
+                    // Create context menu
+                    var contextMenu = new ContextMenuStrip();
+
+                    // Get clipboard monitor service
+                    var clipboardMonitor = sp.GetRequiredService<ClipboardMonitorService>();
+
+                    // Pause/Resume menu item
+                    var monitoringMenuItem = new ToolStripMenuItem("Pause Monitoring");
+                    monitoringMenuItem.Click += (s, e) =>
+                    {
+                        clipboardMonitor.IsMonitoringEnabled = !clipboardMonitor.IsMonitoringEnabled;
+                        monitoringMenuItem.Text = clipboardMonitor.IsMonitoringEnabled ?
+                            "Pause Monitoring" : "Resume Monitoring";
+
+                        icon.ShowBalloonTip(
+                            2000,
+                            "Clipboard Monitoring",
+                            clipboardMonitor.IsMonitoringEnabled ?
+                                "Clipboard monitoring resumed" : "Clipboard monitoring paused",
+                            ToolTipIcon.Info);
+                    };
+                    contextMenu.Items.Add(monitoringMenuItem);
+
+                    // Separator
+                    contextMenu.Items.Add(new ToolStripSeparator());
+
+                    // Exit menu item
+                    var exitMenuItem = new ToolStripMenuItem("Exit");
+                    exitMenuItem.Click += (s, e) =>
+                    {
+                        icon.ShowBalloonTip(
+                            2000,
+                            "Chitti Closing",
+                            "Chitti is shutting down...",
+                            ToolTipIcon.Info);
+
+                        // Give the balloon tip time to show
+                        System.Threading.Thread.Sleep(2000);
+                        Current.Shutdown();
+                    };
+                    contextMenu.Items.Add(exitMenuItem);
+
+                    icon.ContextMenuStrip = contextMenu;
                     return icon;
                 });
 
