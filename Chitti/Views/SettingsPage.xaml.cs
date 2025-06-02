@@ -61,4 +61,61 @@ public partial class SettingsPage : UserControl
             MessageBox.Show($"Error saving settings: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
+
+    private async void ClearDataButton_Click(object sender, RoutedEventArgs e)
+    {
+        var result = MessageBox.Show(
+            "Are you sure you want to clear all data? This will delete all clipboard history and reset the application to its initial state. Your API key will be preserved.\n\nThis action cannot be undone.",
+            "Confirm Data Clear",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+
+        if (result == MessageBoxResult.Yes)
+        {
+            try
+            {
+                // Save the current API key
+                var currentSettings = await _dbContext.AppSettings.FirstOrDefaultAsync();
+                var apiKey = currentSettings?.ApiKey;
+
+                // Delete all clipboard history
+                _dbContext.ClipboardHistory.RemoveRange(_dbContext.ClipboardHistory);
+                await _dbContext.SaveChangesAsync();
+
+                // Recreate settings with preserved API key
+                if (currentSettings != null)
+                {
+                    _dbContext.AppSettings.Remove(currentSettings);
+                    await _dbContext.SaveChangesAsync();
+
+                    var newSettings = new AppSettings
+                    {
+                        ApiKey = apiKey,
+                        IsClipboardMonitoringEnabled = true,
+                        ApiTimeoutSeconds = 30,
+                        ShowDetailedNotifications = true
+                    };
+                    _dbContext.AppSettings.Add(newSettings);
+                    await _dbContext.SaveChangesAsync();
+                }
+
+                MessageBox.Show(
+                    "All data has been cleared successfully. Your API key has been preserved.",
+                    "Success",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+
+                // Reload settings
+                LoadSettings();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error clearing data: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+    }
 } 

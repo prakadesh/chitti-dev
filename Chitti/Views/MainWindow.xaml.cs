@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Chitti.Services;
+using Chitti.Data;
 
 namespace Chitti.Views;
 
@@ -10,6 +11,7 @@ public partial class MainWindow : Window
 {
     private readonly ClipboardMonitorService _clipboardMonitor;
     private readonly NotifyIcon _notifyIcon;
+    private readonly ApplicationDbContext _dbContext;
     private HomePage _homePage;
     private HistoryPage _historyPage;
     private SettingsPage _settingsPage;
@@ -17,17 +19,19 @@ public partial class MainWindow : Window
 
     public MainWindow(
         ClipboardMonitorService clipboardMonitor,
-        NotifyIcon notifyIcon)
+        NotifyIcon notifyIcon,
+        ApplicationDbContext dbContext)
     {
         InitializeComponent();
         this.Icon = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,,/Chitti;component/Assets/logo.png"));
         
         _clipboardMonitor = clipboardMonitor;
         _notifyIcon = notifyIcon;
+        _dbContext = dbContext;
 
         _clipboardMonitor.StatusChanged += OnStatusChanged;
 
-        _homePage = new HomePage();
+        _homePage = new HomePage(_dbContext);
         _historyPage = new HistoryPage();
         _settingsPage = new SettingsPage();
         _logPage = new LogPage();

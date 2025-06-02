@@ -165,6 +165,17 @@
                             <Button Content="/factcheck" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
                             <Button Content="/citations" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
                             <Button Content="/references" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click"/>
+                            <Button Content="/prompt" Style="{StaticResource TagPillButtonStyle}" Margin="0,0,10,10" Click="TagButton_Click">
+                                <Button.ToolTip>
+                                    <ToolTip>
+                                        <StackPanel>
+                                            <TextBlock Text="Prompt Engineering" FontWeight="SemiBold"/>
+                                            <TextBlock Text="Optimizes text for better AI model responses"/>
+                                            <TextBlock Text="Improves clarity, specificity, and effectiveness"/>
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Button.ToolTip>
+                            </Button>
                         </WrapPanel>
                     </StackPanel>
                 </Border>

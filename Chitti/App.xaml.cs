@@ -10,6 +10,7 @@ using Chitti.Helpers;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chitti;
 
@@ -102,8 +103,6 @@ public partial class App : System.Windows.Application
         // Setup system tray icon first
         using var scope = _host.Services.CreateScope();
         _notifyIcon = scope.ServiceProvider.GetRequiredService<NotifyIcon>();
-        var mainWindow = scope.ServiceProvider.GetRequiredService<MainWindow>();
-
 
         // Check for single instance
         _singleInstance = new SingleInstance(_notifyIcon);
@@ -117,11 +116,24 @@ public partial class App : System.Windows.Application
 
         // Initialize database
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        await dbContext.Database.EnsureCreatedAsync();
+        try
+        {
+            // Reset database to default state
+            await ResetDatabase(dbContext);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show($"Database initialization error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            Shutdown();
+            return;
+        }
 
         // Start clipboard monitoring
         var clipboardMonitor = scope.ServiceProvider.GetRequiredService<ClipboardMonitorService>();
         clipboardMonitor.StartMonitoring();
+
+        // Create main window
+        var mainWindow = scope.ServiceProvider.GetRequiredService<MainWindow>();
 
         // Setup system tray icon behavior
         _notifyIcon.DoubleClick += (s, e) =>
@@ -132,8 +144,7 @@ public partial class App : System.Windows.Application
         };
 
         // Show main window
-        var mainWindowShow = scope.ServiceProvider.GetRequiredService<MainWindow>();
-        mainWindowShow.Show();
+        mainWindow.Show();
 
         base.OnStartup(e);
     }
@@ -150,5 +161,22 @@ public partial class App : System.Windows.Application
         await _host.WaitForShutdownAsync();
 
         base.OnExit(e);
+    }
+
+    private async Task ResetDatabase(ApplicationDbContext dbContext)
+    {
+        // Only create database if it doesn't exist
+        await dbContext.Database.EnsureCreatedAsync();
+        
+        // Add default settings if needed
+        if (!dbContext.AppSettings.Any())
+        {
+            dbContext.AppSettings.Add(new Models.AppSettings
+            {
+                ApiKey = string.Empty,
+                // Add other default settings as needed
+            });
+            await dbContext.SaveChangesAsync();
+        }
     }
 } 
