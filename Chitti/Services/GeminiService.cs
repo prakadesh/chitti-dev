@@ -312,6 +312,8 @@ public class GeminiService
             prompt.AppendLine("- Add proper citations");
         if (tags.Contains("references"))
             prompt.AppendLine("- Add a reference list");
+        if (tags.Contains("prompt"))
+            prompt.AppendLine("- Optimize the text as an effective AI prompt");
 
         // Audience-Specific Tags
         if (tags.Contains("technical"))

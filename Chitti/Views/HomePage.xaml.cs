@@ -16,25 +16,30 @@ public partial class HomePage : UserControl
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public HomePage()
+    public HomePage(ApplicationDbContext dbContext)
     {
         InitializeComponent();
-        _dbContext = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseSqlite($"Data Source={AppPaths.DatabasePath}")
-            .Options);
+        _dbContext = dbContext;
         LoadRecentActivity();
     }
 
     private void LoadRecentActivity()
     {
-        var recent = _dbContext.ClipboardHistory
-            .OrderByDescending(h => h.Timestamp)
-            .Take(5)
-            .ToList();
-        RecentActivityList.ItemsSource = recent;
-        EmptyStatePanel.Visibility = recent.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-        RecentActivityList.Visibility = recent.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-        //OnboardingTip.Visibility = recent.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        try
+        {
+            var recent = _dbContext.ClipboardHistory
+                .OrderByDescending(h => h.Timestamp)
+                .Take(5)
+                .ToList();
+            RecentActivityList.ItemsSource = recent;
+            EmptyStatePanel.Visibility = recent.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+            RecentActivityList.Visibility = recent.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            //OnboardingTip.Visibility = recent.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error loading recent activity: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void GitHubButton_Click(object sender, RoutedEventArgs e)

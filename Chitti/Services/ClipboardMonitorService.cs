@@ -425,6 +425,7 @@ public class ClipboardMonitorService
         if (lowered.Contains("/factcheck")) tags.Add("factcheck");
         if (lowered.Contains("/citations")) tags.Add("citations");
         if (lowered.Contains("/references")) tags.Add("references");
+        if (lowered.Contains("/prompt")) tags.Add("prompt");
 
         // Translate Tags (add with slash)
         if (lowered.Contains("/english")) tags.Add("/english");

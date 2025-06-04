@@ -49,6 +49,7 @@
             <SolidColorBrush x:Key="PrimaryText" Color="#222222"/>
             <SolidColorBrush x:Key="SecondaryText" Color="#666666"/>
             <SolidColorBrush x:Key="AccentBlue" Color="#2563EB"/>
+            <SolidColorBrush x:Key="AccentRed" Color="#EF4444"/>
             <SolidColorBrush x:Key="SuccessGreen" Color="#22C55E"/>
             <SolidColorBrush x:Key="ErrorRed" Color="#EF4444"/>
             <SolidColorBrush x:Key="HoverBlue" Color="#EFF6FF"/>

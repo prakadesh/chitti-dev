@@ -84,7 +84,8 @@
                 <!-- Notifications -->
                 <Border Background="{StaticResource CardBackground}" 
                         CornerRadius="10" 
-                        Padding="20">
+                        Padding="20"
+                        Margin="0,0,0,20">
                     <StackPanel>
                         <TextBlock Text="Notifications" 
                                  FontSize="18" 
@@ -98,6 +99,35 @@
                         <TextBlock Text="When enabled, you'll see more detailed information about the text processing status."
                                  TextWrapping="Wrap"
                                  Foreground="{StaticResource SecondaryText}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Data Management -->
+                <Border Background="{StaticResource CardBackground}" 
+                        CornerRadius="10" 
+                        Padding="20"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Data Management" 
+                                 FontSize="18" 
+                                 FontWeight="SemiBold" 
+                                 Foreground="{StaticResource PrimaryText}" 
+                                 Margin="0,0,0,10"/>
+                        <TextBlock Text="Manage your application data and history."
+                                 TextWrapping="Wrap"
+                                 Foreground="{StaticResource SecondaryText}"
+                                 Margin="0,0,0,10"/>
+                        <Button x:Name="ClearDataButton"
+                                Content="Clear All Data"
+                                Background="{StaticResource AccentRed}"
+                                Foreground="White"
+                                Click="ClearDataButton_Click"
+                                HorizontalAlignment="Left"
+                                Padding="15,8"/>
+                        <TextBlock Text="This will delete all clipboard history and reset the application to its initial state. Your API key will be preserved."
+                                 TextWrapping="Wrap"
+                                 Foreground="{StaticResource SecondaryText}"
+                                 Margin="0,10,0,0"/>
                     </StackPanel>
                 </Border>
 
