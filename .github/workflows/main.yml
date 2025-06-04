@@ -1,4 +1,5 @@
 name: Build and Release Chitti
+
 on:
   push:
     tags:
@@ -8,6 +9,10 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        architecture: [win-x64, win-x86]
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -20,33 +25,60 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore Chitti/Chitti.csproj
         
-      - name: Publish using .pubxml
-        run: dotnet publish Chitti/Chitti.csproj -p:PublishProfile=FolderProfile1
-
+      - name: Publish for ${{ matrix.architecture }}
+        run: |
+          dotnet publish Chitti/Chitti.csproj `
+            --configuration Release `
+            --framework net8.0-windows `
+            --runtime ${{ matrix.architecture }} `
+            --self-contained true `
+            --output "Chitti/bin/Release/net8.0-windows/${{ matrix.architecture }}/publish/"
+        
       - name: Rename executable with architecture
         run: |
-          Copy-Item "Chitti/bin/Release/net7.0-windows/win-x86/publish/Chitti.exe" "Chitti/bin/Release/net7.0-windows/win-x86/publish/Chitti-win-x86.exe"
-              
+          Copy-Item "Chitti/bin/Release/net8.0-windows/${{ matrix.architecture }}/publish/Chitti.exe" "Chitti/bin/Release/net8.0-windows/${{ matrix.architecture }}/publish/Chitti-${{ matrix.architecture }}.exe"
+        
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: chitti-${{ matrix.architecture }}
+          path: Chitti/bin/Release/net8.0-windows/${{ matrix.architecture }}/publish/Chitti-${{ matrix.architecture }}.exe
+
+  release:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+          
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           name: Chitti Release ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
           files: |
-            Chitti/bin/Release/net7.0-windows/win-x86/publish/Chitti-win-x86.exe
+            ./artifacts/chitti-win-x64/Chitti-win-x64.exe
+            ./artifacts/chitti-win-x86/Chitti-win-x86.exe
           body: |
             ## Chitti Release ${{ github.ref_name }}
             
             ### What's New
             - Automated build and release
+            - Multi-architecture support (x64 and x86)
+            
+            ### Downloads
+            - **Chitti-win-x64.exe** - For 64-bit Windows systems
+            - **Chitti-win-x86.exe** - For 32-bit Windows systems
             
             ### Installation
-            1. Download `Chitti.exe`
+            1. Download the appropriate executable for your system architecture
             2. Run the executable directly (no installation required)
             
             ### System Requirements
             - Windows 10/11
-            - x64 architecture
+            - Choose x64 version for 64-bit systems, x86 for 32-bit systems
           draft: false
           prerelease: false
         env:
