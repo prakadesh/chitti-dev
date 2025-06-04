@@ -38,6 +38,7 @@ public partial class App : System.Windows.Application
                 services.AddSingleton<GeminiService>();
                 services.AddSingleton<ClipboardMonitorService>();
                 services.AddSingleton<ScreenCaptureService>();
+                services.AddSingleton<HotkeyManager>();
                 services.AddSingleton<NotifyIcon>(sp =>
                 {
                     var iconUri = new Uri("pack://application:,,,/Assets/logo.ico");
@@ -178,6 +179,8 @@ public partial class App : System.Windows.Application
 
             // Show main window
             mainWindow.Show();
+
+            var hotkeyManager = scope.ServiceProvider.GetRequiredService<HotkeyManager>();
 
             base.OnStartup(e);
         }
