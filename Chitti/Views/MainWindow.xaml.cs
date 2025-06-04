@@ -12,6 +12,7 @@ public partial class MainWindow : Window
     private readonly ClipboardMonitorService _clipboardMonitor;
     private readonly NotifyIcon _notifyIcon;
     private readonly ApplicationDbContext _dbContext;
+    private bool _isExiting = false;
     private HomePage _homePage;
     private HistoryPage _historyPage;
     private SettingsPage _settingsPage;
@@ -43,8 +44,22 @@ public partial class MainWindow : Window
 
     private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
     {
-        e.Cancel = true;
-        Hide();
+        if (!_isExiting)
+        {
+            e.Cancel = true;
+            Hide();
+        }
+        else
+        {
+            _notifyIcon.ShowBalloonTip(
+                2000,
+                "Chitti Closing",
+                "Chitti is shutting down...",
+                ToolTipIcon.Info);
+
+            System.Threading.Thread.Sleep(2000);
+            System.Windows.Application.Current.Shutdown();
+        }
     }
 
     private void OnStatusChanged(object? sender, string message)
@@ -86,6 +101,7 @@ public partial class MainWindow : Window
 
     private void CloseButton_Click(object sender, RoutedEventArgs e)
     {
+        _isExiting = true;
         Close();
     }
 
