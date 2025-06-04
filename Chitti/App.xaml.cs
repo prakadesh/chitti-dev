@@ -1,15 +1,17 @@
-using System;
-using System.Windows;
+using Chitti.Data;
+using Chitti.Helpers;
+using Chitti.Models;
+using Chitti.Services;
+using Chitti.Views;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Chitti.Data;
-using Chitti.Services;
-using Chitti.Views;
-using Chitti.Helpers;
-using System.Windows.Forms;
-using System.Threading.Tasks;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Forms;
 
 namespace Chitti;
 
@@ -38,9 +40,22 @@ public partial class App : System.Windows.Application
                 services.AddSingleton<ScreenCaptureService>();
                 services.AddSingleton<NotifyIcon>(sp =>
                 {
-                    var icon = new NotifyIcon
+                    var iconUri = new Uri("pack://application:,,,/Assets/logo.ico");
+                    var resourceStreamInfo = System.Windows.Application.GetResourceStream(iconUri);
+
+                    if (resourceStreamInfo == null)
+                        throw new Exception("Icon resource not found.");
+
+                    System.Drawing.Icon iconObj;
+                    // Load the icon from resource stream safely
+                    using (var stream = resourceStreamInfo.Stream)
                     {
-                        Icon = new System.Drawing.Icon(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets/logo.ico")),
+                        iconObj = new System.Drawing.Icon(stream);
+                    }
+
+                    var notifyIcon = new NotifyIcon
+                    {
+                        Icon = iconObj,
                         Visible = true,
                         Text = "Chitti"
                     };
@@ -48,10 +63,8 @@ public partial class App : System.Windows.Application
                     // Create context menu
                     var contextMenu = new ContextMenuStrip();
 
-                    // Get clipboard monitor service
                     var clipboardMonitor = sp.GetRequiredService<ClipboardMonitorService>();
 
-                    // Pause/Resume menu item
                     var monitoringMenuItem = new ToolStripMenuItem("Pause Monitoring");
                     monitoringMenuItem.Click += (s, e) =>
                     {
@@ -59,7 +72,7 @@ public partial class App : System.Windows.Application
                         monitoringMenuItem.Text = clipboardMonitor.IsMonitoringEnabled ?
                             "Pause Monitoring" : "Resume Monitoring";
 
-                        icon.ShowBalloonTip(
+                        notifyIcon.ShowBalloonTip(
                             2000,
                             "Clipboard Monitoring",
                             clipboardMonitor.IsMonitoringEnabled ?
@@ -68,28 +81,27 @@ public partial class App : System.Windows.Application
                     };
                     contextMenu.Items.Add(monitoringMenuItem);
 
-                    // Separator
                     contextMenu.Items.Add(new ToolStripSeparator());
 
-                    // Exit menu item
                     var exitMenuItem = new ToolStripMenuItem("Exit");
                     exitMenuItem.Click += (s, e) =>
                     {
-                        icon.ShowBalloonTip(
+                        notifyIcon.ShowBalloonTip(
                             2000,
                             "Chitti Closing",
                             "Chitti is shutting down...",
                             ToolTipIcon.Info);
 
-                        // Give the balloon tip time to show
                         System.Threading.Thread.Sleep(2000);
                         Current.Shutdown();
                     };
                     contextMenu.Items.Add(exitMenuItem);
 
-                    icon.ContextMenuStrip = contextMenu;
-                    return icon;
+                    notifyIcon.ContextMenuStrip = contextMenu;
+
+                    return notifyIcon;
                 });
+
 
                 // Views
                 services.AddTransient<MainWindow>();
@@ -99,43 +111,87 @@ public partial class App : System.Windows.Application
 
     protected override async void OnStartup(StartupEventArgs e)
     {
-        // Setup system tray icon first
-        using var scope = _host.Services.CreateScope();
-        _notifyIcon = scope.ServiceProvider.GetRequiredService<NotifyIcon>();
-        var mainWindow = scope.ServiceProvider.GetRequiredService<MainWindow>();
-
-
-        // Check for single instance
-        _singleInstance = new SingleInstance(_notifyIcon);
-        if (!_singleInstance.IsFirstInstance())
+        try
         {
-            Shutdown();
-            return;
-        }
+            // Setup system tray icon first
+            using var scope = _host.Services.CreateScope();
+            _notifyIcon = scope.ServiceProvider.GetRequiredService<NotifyIcon>();
 
-        await _host.StartAsync();
+            // Check for single instance before doing anything else
+            _singleInstance = new SingleInstance(_notifyIcon);
+            if (!_singleInstance.IsFirstInstance())
+            {
+                Shutdown();
+                return;
+            }
 
-        // Initialize database
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        await dbContext.Database.EnsureCreatedAsync();
+            // Start the host
+            await _host.StartAsync();
 
-        // Start clipboard monitoring
-        var clipboardMonitor = scope.ServiceProvider.GetRequiredService<ClipboardMonitorService>();
-        clipboardMonitor.StartMonitoring();
+            // Initialize database first, before creating any windows
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            
+            // Ensure the database directory exists
+            var dbDirectory = Path.GetDirectoryName(AppPaths.DatabasePath);
+            if (!Directory.Exists(dbDirectory))
+            {
+                Directory.CreateDirectory(dbDirectory!);
+            }
 
-        // Setup system tray icon behavior
-        _notifyIcon.DoubleClick += (s, e) =>
-        {
+            // Create database ONLY if it doesn't exist (remove EnsureDeletedAsync)
+            Logger.Log("Checking database...");
+            if (!File.Exists(AppPaths.DatabasePath))
+            {
+                Logger.Log("Database file not found. Creating new database...");
+                await dbContext.Database.EnsureCreatedAsync();
+
+                // Initialize default settings for new database only
+                Logger.Log("Initializing default settings...");
+                dbContext.AppSettings.Add(new AppSettings
+                {
+                    IsClipboardMonitoringEnabled = true,
+                    ApiTimeoutSeconds = 30,
+                    ShowDetailedNotifications = true,
+                    DefaultTags = string.Empty,
+                    ApiKey = string.Empty
+                });
+                await dbContext.SaveChangesAsync();
+            }
+            else
+            {
+                // Just ensure the database is up to date with the current model
+                await dbContext.Database.EnsureCreatedAsync();
+            }
+
+            // Rest of your startup code...
+            var mainWindow = scope.ServiceProvider.GetRequiredService<MainWindow>();
+            var clipboardMonitor = scope.ServiceProvider.GetRequiredService<ClipboardMonitorService>();
+            clipboardMonitor.StartMonitoring();
+
+            // Setup system tray icon behavior
+            _notifyIcon.DoubleClick += (s, e) =>
+            {
+                mainWindow.Show();
+                mainWindow.WindowState = WindowState.Normal;
+                mainWindow.Activate();
+            };
+
+            // Show main window
             mainWindow.Show();
-            mainWindow.WindowState = WindowState.Normal;
-            mainWindow.Activate();
-        };
 
-        // Show main window
-        var mainWindowShow = scope.ServiceProvider.GetRequiredService<MainWindow>();
-        mainWindowShow.Show();
-
-        base.OnStartup(e);
+            base.OnStartup(e);
+        }
+        catch (Exception ex)
+        {
+            Logger.Log($"Startup error: {ex}");
+            System.Windows.MessageBox.Show(
+                $"Critical Error During Startup:\n\n{ex.Message}\n\nDetails have been written to the log file at:\n{AppPaths.LogPath}",
+                "Startup Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            
+            Shutdown(-1);
+        }
     }
 
     protected override async void OnExit(ExitEventArgs e)

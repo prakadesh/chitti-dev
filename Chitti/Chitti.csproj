@@ -1,8 +1,8 @@
-    <Project Sdk="Microsoft.NET.Sdk">
+﻿    <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
@@ -13,6 +13,18 @@
     <SelfContained>true</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishReadyToRun>true</PublishReadyToRun>
+	<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+	<!-- SQLite Settings -->
+	<SQLiteLinkerEnabled>false</SQLiteLinkerEnabled>
+	  <!-- Native Dependencies -->
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
+        <!-- Application Settings -->
+    <ApplicationIcon>Assets\logo.ico</ApplicationIcon>
+    <AssemblyName>Chitti</AssemblyName>
+    <Product>Chitti</Product>
+    
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,4 +44,17 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="Assets\logo.ico" />
+    <Content Remove="Assets\logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\logo.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\logo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
 </Project> 
