@@ -14,6 +14,25 @@ public partial class ChatWindow : Window
     private readonly GeminiService _geminiService;
     private readonly ObservableCollection<ChatMessage> _messages;
     private bool _isDragging;
+    private bool _isProcessing;
+
+    public bool IsProcessing
+    {
+        get => _isProcessing;
+        set
+        {
+            _isProcessing = value;
+            LoadingOverlay.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+            MessageInput.IsEnabled = !value;
+            SendButton.IsEnabled = !value;
+        }
+    }
+
+    // Add minimize button handler
+    private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+    {
+        WindowState = WindowState.Minimized;
+    }
 
     public ChatWindow(GeminiService geminiService)
     {
@@ -53,25 +72,23 @@ public partial class ChatWindow : Window
         Close();
     }
 
+    // Update SendButton_Click method
     private async void SendButton_Click(object sender, RoutedEventArgs e)
     {
         if (string.IsNullOrWhiteSpace(MessageInput.Text)) return;
 
-        var userMessage = new ChatMessage 
-        { 
-            Content = MessageInput.Text,    
+        var userMessage = new ChatMessage
+        {
+            Content = MessageInput.Text,
             IsUser = true,
-            Timestamp = DateTime.Now 
+            Timestamp = DateTime.Now
         };
         _messages.Add(userMessage);
-
         MessageInput.Text = string.Empty;
-        MessageInput.IsEnabled = false;
-        SendButton.IsEnabled = false;
 
+        IsProcessing = true;
         try
         {
-            // Create a tag list with chat-specific behavior
             var tags = new List<string> { "@chitti chat" };
             var response = await _geminiService.ProcessText(userMessage.Content, tags);
             _messages.Add(new ChatMessage
@@ -83,27 +100,37 @@ public partial class ChatWindow : Window
         }
         catch (Exception ex)
         {
-            _messages.Add(new ChatMessage 
-            { 
-                Content = $"Error: {ex.Message}", 
+            _messages.Add(new ChatMessage
+            {
+                Content = $"Error: {ex.Message}",
                 IsUser = false,
                 IsError = true,
-                Timestamp = DateTime.Now 
+                Timestamp = DateTime.Now
             });
         }
-
-        MessageInput.IsEnabled = true;
-        SendButton.IsEnabled = true;
-        MessageInput.Focus();
-        ChatList.ScrollIntoView(ChatList.Items[ChatList.Items.Count - 1]);
+        finally
+        {
+            IsProcessing = false;
+            MessageInput.Focus();
+            await Task.Delay(100); // Small delay to ensure UI updates
+            MessagesScrollViewer.ScrollToBottom();
+        }
     }
 
     private void MessageInput_KeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Enter && !e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Shift))
+        if (e.Key == Key.Enter)
         {
-            e.Handled = true;
-            SendButton_Click(sender, e);
+            if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift)
+            {
+                // Allow Shift+Enter for new line
+                return;
+            }
+            else
+            {
+                e.Handled = true; // Prevent new line
+                SendButton_Click(sender, e);
+            }
         }
     }
 }
