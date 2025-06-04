@@ -22,13 +22,6 @@ jobs:
         
       - name: Publish using .pubxml
         run: dotnet publish Chitti/Chitti.csproj -p:PublishProfile=FolderProfile1
-            
-      - name: List published files (for debugging)
-        run: |
-          echo "Contents of Chitti directory:"
-          Get-ChildItem -Path ./Chitti -Recurse -Name "*.exe"
-          echo "Full directory structure:"
-          Get-ChildItem -Path ./Chitti/bin/Release/net7.0-windows/win-x64/publish/win-x86/ -ErrorAction SilentlyContinue
           
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -36,7 +29,7 @@ jobs:
           name: Chitti Release ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
           files: |
-            Chitti/bin/Release/net7.0-windows/win-x64/publish/win-x86/Chitti.exe
+            Chitti/bin/Release/net7.0-windows/win-x86/publish/Chitti.exe
           body: |
             ## Chitti Release ${{ github.ref_name }}
             
