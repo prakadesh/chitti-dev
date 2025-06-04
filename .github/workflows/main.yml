@@ -1,5 +1,4 @@
 name: Build and Release Chitti
-
 on:
   push:
     tags:
@@ -9,27 +8,49 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '7.0.x'
-
+          
       - name: Restore dependencies
         run: dotnet restore Chitti/Chitti.csproj
-
+        
       - name: Publish using .pubxml
         run: dotnet publish Chitti/Chitti.csproj -p:PublishProfile=FolderProfile1
-
-      - name: Upload EXE to GitHub Release
+            
+      - name: List published files (for debugging)
+        run: |
+          echo "Contents of Chitti directory:"
+          Get-ChildItem -Path ./Chitti -Recurse -Name "*.exe"
+          echo "Full directory structure:"
+          Get-ChildItem -Path ./Chitti/bin/Release/net7.0-windows/win-x64/publish/win-x86/ -ErrorAction SilentlyContinue
+          
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           name: Chitti Release ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
-          files: Chitti/bin/Release/net7.0-windows/win-x86/publish/Chitti.exe
+          files: |
+            Chitti/bin/Release/net7.0-windows/win-x64/publish/win-x86/Chitti.exe
+          body: |
+            ## Chitti Release ${{ github.ref_name }}
+            
+            ### What's New
+            - Automated build and release
+            
+            ### Installation
+            1. Download `Chitti.exe`
+            2. Run the executable directly (no installation required)
+            
+            ### System Requirements
+            - Windows 10/11
+            - x64 architecture
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
