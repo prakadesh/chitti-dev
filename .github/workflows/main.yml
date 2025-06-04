@@ -15,21 +15,25 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '7.0.x'
+          dotnet-version: '8.0.x'
           
       - name: Restore dependencies
         run: dotnet restore Chitti/Chitti.csproj
         
       - name: Publish using .pubxml
         run: dotnet publish Chitti/Chitti.csproj -p:PublishProfile=FolderProfile1
-          
+
+      - name: Rename executable with architecture
+        run: |
+          Copy-Item "Chitti/bin/Release/net7.0-windows/win-x86/publish/Chitti.exe" "Chitti/bin/Release/net7.0-windows/win-x86/publish/Chitti-win-x86.exe"
+              
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           name: Chitti Release ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
           files: |
-            Chitti/bin/Release/net7.0-windows/win-x86/publish/Chitti.exe
+            Chitti/bin/Release/net7.0-windows/win-x86/publish/Chitti-win-x86.exe
           body: |
             ## Chitti Release ${{ github.ref_name }}
             
