@@ -1,17 +1,18 @@
+using Chitti.Data;
+using Chitti.Helpers;
+using Chitti.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using System.Linq;
-using Chitti.Data;
-using Chitti.Models;
-using Chitti.Helpers;
-using Microsoft.EntityFrameworkCore;
-using System.Drawing;
-using System.IO;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Chitti.Services;
 
@@ -19,6 +20,7 @@ public class GeminiService
 {
     private readonly HttpClient _httpClient;
     private readonly ApplicationDbContext _dbContext;
+    private readonly NotifyIcon _notifyIcon;
     private const string TEXT_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
     private const string VISION_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent";
 
@@ -37,6 +39,12 @@ public class GeminiService
         if (settings == null || string.IsNullOrEmpty(settings.ApiKey))
         {
             Logger.Log("GeminiService: API key not configured.");
+            //notify of missing API Key 
+            _notifyIcon.ShowBalloonTip(
+           3000,
+           "API key not configured",
+           "Please set it in Settings..",
+           ToolTipIcon.Error);
             throw new InvalidOperationException("API key not configured. Please set it in Settings.");
         }
 
@@ -370,6 +378,19 @@ public class GeminiService
             prompt.AppendLine("- Format the text as a blog post");
         if (tags.Contains("news"))
             prompt.AppendLine("- Format the text as a news article");
+        //specail chat tag
+        if (tags.Any(t => t.StartsWith("@chitti chat")))
+        {
+            prompt.AppendLine("You are a helpful AI assistant engaging in conversation. Please:");
+            prompt.AppendLine("- Respond naturally and conversationally");
+            prompt.AppendLine("- Keep responses concise but informative");
+            prompt.AppendLine("- Stay on topic");
+            prompt.AppendLine("- If you don't know something, admit it");
+            prompt.AppendLine("- If asked to perform a task, explain how you would do it");
+            prompt.AppendLine("\nUser message:");
+            prompt.AppendLine(text);
+            return prompt.ToString();
+        }
 
         prompt.AppendLine("\nText to process:");
         prompt.AppendLine(text);
