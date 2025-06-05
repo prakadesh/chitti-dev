@@ -28,6 +28,7 @@ public class HotkeyManager : IDisposable
     private IntPtr _windowHandle;
     private const int HOTKEY_ID = 9000;
     private HwndSource? _source;
+    private readonly NotifyIcon _notifyIcon;
 
     // Define modifier keys constants
     private const uint MOD_ALT = 0x0001;
@@ -39,6 +40,14 @@ public class HotkeyManager : IDisposable
     {
         _dbContext = dbContext;
         _serviceProvider = serviceProvider;
+        // Initialize NotifyIcon instance
+        _notifyIcon = new NotifyIcon
+        {
+            Visible = true,
+            Icon = System.Drawing.SystemIcons.Application, // Example icon
+            Text = "Hotkey Manager"
+        };
+
 
         // Wait for main window to be created
         System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
@@ -70,10 +79,21 @@ public class HotkeyManager : IDisposable
                 if (!success)
                 {
                     Logger.Log($"Failed to register hotkey. Modifiers: {modifiers}, Key: {settings.ChatHotkeyKey}");
+                    _notifyIcon.ShowBalloonTip(
+                        2000,
+                        "Hotkey Registration Failed",
+                        "Failed to register the chat hotkey. Please try a different combination.",
+                        ToolTipIcon.Error);
                 }
                 else
                 {
                     Logger.Log("Hotkey registered successfully");
+                    var keyText = GetHotkeyDisplayText(settings.ChatHotkeyModifiers, settings.ChatHotkeyKey);
+                    _notifyIcon.ShowBalloonTip(
+                        2000,
+                        "Hotkey Registered",
+                        $"Chat hotkey registered: {keyText}",
+                        ToolTipIcon.Info);
                 }
             }
         }
@@ -123,16 +143,40 @@ public class HotkeyManager : IDisposable
             if (!success)
             {
                 Logger.Log($"Failed to update hotkey. Modifiers: {winModifiers}, Key: {key}");
+                _notifyIcon.ShowBalloonTip(
+                    2000,
+                    "Hotkey Update Failed",
+                    "Failed to register the new hotkey. Please try a different combination.",
+                    ToolTipIcon.Error);
             }
             else
             {
                 Logger.Log("Hotkey updated successfully");
+                var keyText = GetHotkeyDisplayText(modifiers, key);
+                _notifyIcon.ShowBalloonTip(
+                    2000,
+                    "Hotkey Updated",
+                    $"Chat hotkey updated to: {keyText}",
+                    ToolTipIcon.Info);
             }
         }
         catch (Exception ex)
         {
             Logger.Log($"Error updating hotkey: {ex.Message}");
         }
+    }
+        private string GetHotkeyDisplayText(int modifiers, int key)
+    {
+        var text = new System.Text.StringBuilder();
+        
+        if ((modifiers & (int)ModifierKeys.Control) != 0) text.Append("Ctrl + ");
+        if ((modifiers & (int)ModifierKeys.Alt) != 0) text.Append("Alt + ");
+        if ((modifiers & (int)ModifierKeys.Shift) != 0) text.Append("Shift + ");
+        if ((modifiers & (int)ModifierKeys.Windows) != 0) text.Append("Win + ");
+        
+        text.Append(((Keys)key).ToString());
+        
+        return text.ToString();
     }
 
     public void Dispose()
